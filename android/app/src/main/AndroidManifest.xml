@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="de.famulla.malteser" android:versionCode="10000" android:versionName="1.0.0">
+ <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35"/>
+ <queries><intent><action android:name="android.media.action.IMAGE_CAPTURE"/></intent><intent><action android:name="android.speech.action.RECOGNIZE_SPEECH"/></intent></queries>
+ <application android:label="Malteser Dienstzettel" android:icon="@drawable/icon" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:usesCleartextTraffic="false" android:supportsRtl="true">
+  <activity android:name=".MainActivity" android:exported="true" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|screenSize|keyboardHidden"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity>
+  <provider android:name=".CameraProvider" android:authorities="de.famulla.malteser.camera" android:exported="false" android:grantUriPermissions="true"/>
+ </application>
+</manifest>
