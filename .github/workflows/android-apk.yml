@@ -1,0 +1,53 @@
+name: Malteser-Dienstnachweis Android APK
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'android-app/**'
+      - 'index.html'
+      - 'sw.js'
+      - 'manifest.webmanifest'
+      - 'icon-192.png'
+      - 'icon-512.png'
+      - '.github/workflows/android-apk.yml'
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Configure Android SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          SDKMANAGER="$(find "$SDK_ROOT/cmdline-tools" -path '*/bin/sdkmanager' -type f | sort -V | tail -n 1)"
+          if [ -z "$SDKMANAGER" ]; then echo "::error::Android SDK command line tools missing in $SDK_ROOT"; exit 1; fi
+          echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "$(dirname "$SDKMANAGER")" >> "$GITHUB_PATH"
+          yes | "$SDKMANAGER" --licenses >/dev/null || test "${PIPESTATUS[1]}" -eq 0
+          "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Bundle current offline web app
+        run: |
+          mkdir -p android-app/app/src/main/assets
+          cp index.html sw.js manifest.webmanifest icon-192.png icon-512.png android-app/app/src/main/assets/
+          mkdir -p android-app/app/src/main/res/drawable
+          cp icon-192.png android-app/app/src/main/res/drawable/app_icon.png
+          python3 android-app/prepare_assets.py
+      - name: Build APK
+        working-directory: android-app
+        run: gradle :app:assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Malteser-Dienstnachweis-Android-Test-APK
+          path: android-app/app/build/outputs/apk/debug/*.apk
+          retention-days: 30
