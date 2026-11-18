@@ -1,4 +1,4 @@
-name: Malteser-Dienstnachweis Android APK
+name: Malteser-Diensterfassung Android APK
 on:
   workflow_dispatch:
   push:
@@ -48,6 +48,6 @@ jobs:
         run: gradle :app:assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
-          name: Malteser-Dienstnachweis-Android-Test-APK
+          name: Malteser-Diensterfassung-Android-Test-APK
           path: android-app/app/build/outputs/apk/debug/*.apk
           retention-days: 30

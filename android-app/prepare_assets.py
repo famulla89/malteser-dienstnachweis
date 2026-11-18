@@ -6,3 +6,9 @@ for old,new in changes:
     if old not in s: raise RuntimeError("Source pattern missing: "+old[:60])
     s=s.replace(old,new)
 p.write_text(s,encoding="utf-8")
+
+s=p.read_text(encoding="utf-8")
+css=Path("android-app/modern.css").read_text(encoding="utf-8")
+js=Path("android-app/modern.js").read_text(encoding="utf-8")
+s=s.replace("</head>","<style>"+css+"</style></head>",1).replace("</body>","<script>"+js+"</script></body>",1)
+p.write_text(s,encoding="utf-8")
