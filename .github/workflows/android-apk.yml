@@ -43,6 +43,8 @@ jobs:
           mkdir -p android-app/app/src/main/res/drawable
           cp icon-192.png android-app/app/src/main/res/drawable/app_icon.png
           python3 android-app/prepare_assets.py
+      - name: Validate bundled JavaScript and hour calculations
+        run: python3 android-app/test_assets.py
       - name: Build APK
         working-directory: android-app
         run: gradle :app:assembleDebug --no-daemon

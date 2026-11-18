@@ -10,5 +10,10 @@ p.write_text(s,encoding="utf-8")
 s=p.read_text(encoding="utf-8")
 css=Path("android-app/modern.css").read_text(encoding="utf-8")
 js=Path("android-app/modern.js").read_text(encoding="utf-8")
-s=s.replace("</head>","<style>"+css+"</style></head>",1).replace("</body>","<script>"+js+"</script></body>",1)
+s=s.replace("</head>","<style>"+css+"</style></head>",1)
+a,b=s.rsplit("</body>",1)
+s=a+"<script>"+js+"</script></body>"+b
+p.write_text(s,encoding="utf-8")
+
+s=s.replace("dauerhaft in diesem Browser gespeichert","dauerhaft in dieser App gespeichert").replace("Die Daten werden nur in diesem Browser auf diesem Gerät gespeichert.","Die Daten werden nur in dieser App auf diesem Gerät gespeichert.")
 p.write_text(s,encoding="utf-8")
